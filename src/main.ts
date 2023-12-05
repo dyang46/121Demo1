@@ -12,9 +12,10 @@ app.append(header);
 
 //set click counter 
 let clickCount = 0;
-
+//console.log(clickCount);
 function trackButtonClick() {
   clickCount++;
+  console.log(clickCount);
   updateClickCount();
 }
 //print #click
@@ -29,7 +30,11 @@ const button = document.getElementById('trackButton');
 if (button) {
   button.addEventListener('click', trackButtonClick);
 }
-
+//auto click every second
+setInterval(() => {
+  clickCount++;
+  updateClickCount();
+}, 1000);
 
 
 
