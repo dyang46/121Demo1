@@ -1,5 +1,9 @@
 import "./style.css";
 
+let clickCount = 0;
+let shopCount = 0;
+let netGrowth = 0;
+
 const app: HTMLDivElement = document.querySelector("#app")!;
 
 const gameName = "KAZ NEST THE HOUSE";
@@ -23,19 +27,39 @@ const unitName = document.createElement("div");
 unitName.innerHTML= "Nest (unit: m²)";
 
 const numDislay = document.createElement("div");
-numDislay.innerHTML = "0";
+numDislay.innerHTML = `${clickCount}`;
 numDislay.id = "num";
 
 const message = document.createElement("msg");
 message.innerHTML = "Nesting kid x1";
 message.id = "message";
 
+interface item{
+  cost:number;
+  growthRate:number;
+  display:string;
+  msgKey:string;
+  id:string;
+}
+
+const itemList: item[] = [];
+
+function addButton(cost:number, growthRate:number,display:string,msgKey:string,id:string){
+  const newB=  document.createElement("button");
+  newB.innerHTML = display;
+  newB.id = id;
+  newB.disabled = true;
+  app.append(newB);
+  itemList.push({cost,growthRate,display,msgKey,id});
+}
+
 app.append(header,Butest,unitName, numDislay,Shop);
 
-let clickCount = 0;
-let shopCount = 0;
-
-
+addButton(10,0.1,"Work harder","New plan made","i1");
+addButton(100,2.0,"Lay egg","New plan made","i2");
+addButton(1000,50,"Build a spider house","New plan made","i3");
+addButton(5000,100,"Start annul spider meeting","New plan made","i4");
+addButton(10000,1000,"Internest","New plan made","i5");
 
 function trackButtonClick() {
   clickCount++;
@@ -43,14 +67,14 @@ function trackButtonClick() {
     updateShop();
     //requestAnimationFrame(movediv);
   }
-  console.log(clickCount);
+  //console.log(clickCount);
   updateClickCount();
 }
 
 function updateClickCount() {
   const clickCountElement = document.getElementById("num");
   if (clickCountElement) {
-    clickCountElement.textContent = clickCount.toString();
+    clickCountElement.textContent = `${clickCount.toFixed(0)}`;
   }
   switch(clickCount){
     case 70:
@@ -91,10 +115,26 @@ function updateGameName(t:string,j: string) {
   }
 }
 
+let lasttime:number = 0;
+
+function movediv(time:number){
+  //console.log("time:" + time);
+  const passed = time - lasttime;
+  lasttime = time;
+  const toadd = passed*0.001*netGrowth;
+  //console.log("this is to add:" + toadd);
+  clickCount += toadd;
+  //console.log(clickCount);
+  updateClickCount();  
+  requestAnimationFrame(movediv);
+}
+requestAnimationFrame(movediv);
 function trackShopClick(){
   if (clickCount >=10){
+  //console.log(clickCount);
   clickCount -= 10;  
-  requestAnimationFrame(movediv);
+  netGrowth += 1;
+  //requestAnimationFrame(movediv);
   shopCount ++;
   updateShop();
   app.append(message);
@@ -106,20 +146,14 @@ function trackShopClick(){
 
 Butest.addEventListener('click', trackButtonClick);
 Shop.addEventListener('click', trackShopClick);
+
+
+
+
+//requestAnimationFrame(movediv);
 //Old Step 3 code
 
 /*setInterval(() => {
   clickCount++;
   updateClickCount();
 }, 1000);*/
-
-
-let k = 0;
-
-function movediv(){
-    k++;
-    if (k % 60 == 0){clickCount++;
-    updateClickCount();
-  }  
-  requestAnimationFrame(movediv);
-}
