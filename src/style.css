@@ -64,8 +64,8 @@ button:focus-visible {
 
 msg {
   position: absolute;
-  top: 15px;
-  right: 86px;
+  top: 100px;
+  right: 100px;
   font-size: 18px;
 }
 

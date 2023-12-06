@@ -2,12 +2,13 @@ import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-const gameName = "KAZ NEST THE EARTH";
+const gameName = "KAZ NEST THE HOUSE";
 
 document.title = gameName;
 
 const header = document.createElement("h1");
 header.innerHTML = gameName;
+header.id = "header";
 
 const Butest = document.createElement("button");
 Butest.innerHTML = "🕷️";
@@ -33,6 +34,9 @@ app.append(header,Butest,unitName, numDislay,Shop);
 
 let clickCount = 0;
 let shopCount = 0;
+
+
+
 function trackButtonClick() {
   clickCount++;
   if (clickCount==10){
@@ -48,6 +52,21 @@ function updateClickCount() {
   if (clickCountElement) {
     clickCountElement.textContent = clickCount.toString();
   }
+  switch(clickCount){
+    case 70:
+      console.log("reached 100");
+      updateGameName("header","KAZ NEST THE NEIGHBORHOOD");
+      break;
+    case 1000:
+      updateGameName("header","KAZ NEST THE CITY");
+      break;
+    case 10000:
+      updateGameName("header","KAZ NEST THE COUNTRY");
+      break;
+    case 1000000:
+      updateGameName("header","KAZ NEST THE EARTH");
+      break;
+  }
 }
 
 function updateShop(){
@@ -59,10 +78,17 @@ function updateShop(){
   }else{
     const shopCountElement = document.getElementById("message");
     if (shopCountElement) {
-      shopCountElement.textContent = "Nesting kid x"+shopCount.toString();
+      shopCountElement.textContent = "Nesting kids x"+shopCount.toString();
   }
   }
   
+}
+
+function updateGameName(t:string,j: string) {
+  const GameName = document.getElementById(t);
+  if (GameName) {
+    GameName.textContent = j;
+  }
 }
 
 function trackShopClick(){
@@ -74,6 +100,7 @@ function trackShopClick(){
   app.append(message);
   }
 }
+
 
 //track each click
 
