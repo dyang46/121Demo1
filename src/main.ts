@@ -8,33 +8,36 @@ document.title = gameName;
 
 const header = document.createElement("h1");
 header.innerHTML = gameName;
-app.append(header);
+const Butest = document.createElement("button");
+Butest.innerHTML = "🕷️";
+const unitName = document.createElement("div");
+unitName.id = "a";
+unitName.innerHTML= "Nest ";
+const numDislay = document.createElement("div");
+numDislay.id = "lemme";
 
-//set click counter 
 let clickCount = 0;
-//console.log(clickCount);
+
 function trackButtonClick() {
   clickCount++;
   console.log(clickCount);
   updateClickCount();
 }
-//print #click
 function updateClickCount() {
-  const clickCountElement = document.getElementById('clickCount');
+  const clickCountElement = document.getElementById("lemme");
   if (clickCountElement) {
     clickCountElement.textContent = clickCount.toString();
   }
 }
 //track each click
-const button = document.getElementById('trackButton');
-if (button) {
-  button.addEventListener('click', trackButtonClick);
-}
-//auto click every second
+
+Butest.addEventListener('click', trackButtonClick);
+
+app.append(header,Butest,unitName, numDislay);
+
+
 setInterval(() => {
   clickCount++;
   updateClickCount();
 }, 1000);
-
-
 
