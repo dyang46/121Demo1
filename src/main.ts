@@ -2,7 +2,7 @@ import "./style.css";
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-const gameName = "KAZ BUZZ";
+const gameName = "KAZ NEST THE EARTH";
 
 document.title = gameName;
 
@@ -12,19 +12,33 @@ header.innerHTML = gameName;
 const Butest = document.createElement("button");
 Butest.innerHTML = "🕷️";
 
+const Shop = document.createElement("button");
+Shop.innerHTML = "Lay egg: -10 m² per each";
+Shop.disabled=true;
+Shop.id = "shop";
+
 const unitName = document.createElement("div");
 
-unitName.innerHTML= "Nest ";
+unitName.innerHTML= "Nest (unit: m²)";
 
 const numDislay = document.createElement("div");
+numDislay.innerHTML = "0";
 numDislay.id = "num";
 
-app.append(header,Butest,unitName, numDislay);
+const message = document.createElement("msg");
+message.innerHTML = "Nesting kid x1";
+message.id = "message";
+
+app.append(header,Butest,unitName, numDislay,Shop);
 
 let clickCount = 0;
-
+let shopCount = 0;
 function trackButtonClick() {
   clickCount++;
+  if (clickCount==10){
+    updateShop();
+    //requestAnimationFrame(movediv);
+  }
   console.log(clickCount);
   updateClickCount();
 }
@@ -36,25 +50,49 @@ function updateClickCount() {
   }
 }
 
+function updateShop(){
+  if(Shop.disabled == true){
+    const Shopelement = document.getElementById("shop");
+    if (Shopelement){
+      Shop.disabled =false;
+    }
+  }else{
+    const shopCountElement = document.getElementById("message");
+    if (shopCountElement) {
+      shopCountElement.textContent = "Nesting kid x"+shopCount.toString();
+  }
+  }
+  
+}
+
+function trackShopClick(){
+  if (clickCount >=10){
+  clickCount -= 10;  
+  requestAnimationFrame(movediv);
+  shopCount ++;
+  updateShop();
+  app.append(message);
+  }
+}
+
 //track each click
 
 Butest.addEventListener('click', trackButtonClick);
-
+Shop.addEventListener('click', trackShopClick);
 //Old Step 3 code
 
 /*setInterval(() => {
   clickCount++;
   updateClickCount();
 }, 1000);*/
+
+
 let k = 0;
-function movediv(timestamp){
-  //if (timestamp % 100 ==0){
+
+function movediv(){
     k++;
     if (k % 60 == 0){clickCount++;
-    updateClickCount();}
-  //}
-  //clickCount++;
-  
+    updateClickCount();
+  }  
   requestAnimationFrame(movediv);
 }
-requestAnimationFrame(movediv);
