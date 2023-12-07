@@ -7,7 +7,7 @@ let netGrowth = 0;
 //add basic UI
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-const gameName = "KAZ NEST THE DESK";
+const gameName = "KAZ NESTS THE DESK";
 
 document.title = gameName;
 
@@ -16,6 +16,9 @@ header.innerHTML = gameName;
 header.id = "header";
 
 const Butest = document.createElement("button");
+Butest.style.borderRadius = '10000px';
+Butest.style.fontSize = '2em';
+Butest.style.opacity = '0.8';
 Butest.innerHTML = "🕷️";
 
 const numDislay = document.createElement("div");
@@ -27,10 +30,14 @@ growDislay.innerHTML = `Nest growth rate + 0.00 m²/sec`;
 growDislay.id = "rate";
 
 const message = document.createElement("msg");
-message.innerHTML = "Nesting kid x1";
+message.innerHTML = "Nesting kid +1";
 message.id = "message";
 
-app.append(header,Butest, numDislay,growDislay);
+const nestpic = document.createElement("nest");
+nestpic.innerHTML = "🕸️";
+
+
+app.append(header,Butest, numDislay,growDislay,nestpic);
 //finish basics
 
 //Adding shop buttons
@@ -39,8 +46,11 @@ interface item{
   growthRate:number;
   total:number;
   display:string;
-  msgKey:string;
+  msgKey1:string;
+  msgKey2:string;
+  msgKey3:string;
   button:HTMLButtonElement;
+  msg:HTMLElement;
   dim:boolean;
 }
 
@@ -51,8 +61,11 @@ const itemList: item[] = [
     growthRate:0.1,
     total:0,
     display:"Work harder! -",
-    msgKey:"Working 1 more hour per day!",
+    msgKey1:" Working ",
+    msgKey2:" more hour per day!",
+    msgKey3:"  ⸜( *ˊᵕˋ* )⸝ Work harder",
     button:document.createElement("button"),
+    msg:document.createElement("msg"),
     dim:true
   },
   {
@@ -60,27 +73,49 @@ const itemList: item[] = [
     growthRate:2.0,
     total:0,
     display:"Lay egg! -",
-    msgKey:"Nesting kid #1 is born",
+    msgKey1:" Nesting kid #",
+    msgKey2:" is born!",
+    msgKey3:"  (╯✧▽✧)╯ Ask your kids to help",
     button:document.createElement("button"),
+    msg:document.createElement("msg"),
     dim:true
   },
   {
     cost: 1000,
     growthRate:50.0,
     total:0,
-    display:"Annual meeting! -",
-    msgKey:"New nesting plan has made",
+    display:"Nesting meeting! -",
+    msgKey1:" New nesting plan #",
+    msgKey2:" has made!",
+    msgKey3:"  <(￣︶￣)> ",
     button:document.createElement("button"),
+    msg:document.createElement("msg"),
+    dim:true
+
+  },
+  { 
+    cost: 3000,
+    growthRate:100.0,
+    total:0,
+    display:"Nest refactoring! -",
+    msgKey1:" Efficient nest @",
+    msgKey2:"  built!",
+    msgKey3:"  (*꒦ິ꒳꒦ີ) ",
+    button:document.createElement("button"),
+    msg:document.createElement("msg"),
     dim:true
 
   },
   { 
     cost: 5000,
-    growthRate:100.0,
+    growthRate:150.0,
     total:0,
-    display:"Build Internest! -",
-    msgKey:"12D nesting",
+    display:"INTERNEST INTERNEST! -",
+    msgKey1:" ",
+    msgKey2:"D nesting!",
+    msgKey3:"  ☆*:.｡.o(≧▽≦)o.｡.:*☆",
     button:document.createElement("button"),
+    msg:document.createElement("msg"),
     dim:true
 
   }
@@ -94,7 +129,6 @@ function addButton(itemList: item[]){
     k.disabled = true;
     k.innerHTML = itemList[i].display+itemList[i].cost.toFixed(2);
     app.append(k);
-    console.log(itemList[i].msgKey);
     k.addEventListener('click',()=>trackShop(itemList[i]));
   }
 
@@ -108,16 +142,16 @@ function updateClickCount() {
   switch(clickCount.toFixed(0)){
     case '5':
       console.log("reached 100");
-      updateGameName("header","KAZ NEST THE ROOM");
+      updateGameName("header","KAZ NESTS THE ROOM");
       break;
     case '50':
-      updateGameName("header","KAZ NEST THE HOUSE");
+      updateGameName("header","KAZ NESTS THE HOUSE");
       break;
     case '600':
-      updateGameName("header","KAZ NEST THE BLOCK");
+      updateGameName("header","KAZ NESTS THE BLOCK");
       break;
     case '1000000':
-      updateGameName("header","KAZ NEST THE NEIGHBORHOOD");
+      updateGameName("header","KAZ NESTS THE NEIGHBORHOOD");
       break;
   }
 }
@@ -144,8 +178,7 @@ Butest.addEventListener('click', ()=>trackMainClick(itemList));
 function updateShop(itemlist:item[]){
   for(const i in itemlist){
     if (clickCount >= itemlist[i].cost){      
-      itemlist[i].button.disabled=false;
-      console.log('click');
+      itemlist[i].button.disabled=false;      
     }else{
       itemlist[i].button.disabled=true;
     }
@@ -155,8 +188,16 @@ function updateShop(itemlist:item[]){
 function trackShop(i:item){      
     clickCount -= i.cost;
     i.cost = i.cost*1.15;
-    i.button.innerHTML = i.display+i.cost.toFixed(2);
+    i.button.innerHTML = i.display+i.cost.toFixed(2)+i.msgKey3;
     netGrowth += i.growthRate;
+    i.total += 1;    
+    if(i.dim == true){
+      //i.msg.textContent = i.msgKey1 + i.total + i.msgKey2;
+      app.append(i.msg);
+      i.dim = false;
+    }
+    i.msg.textContent = i.msgKey1 + i.total + i.msgKey2;
+    
 
     growDislay.innerHTML = `Nest growth rate + ${netGrowth.toFixed(2)} m²/sec`
 
