@@ -159,7 +159,7 @@ function updateClickCount() {
     case '600':
       updateGameName("header","KAZ NESTS THE BLOCK");
       break;
-    case '1000000':
+    case '10000':
       updateGameName("header","KAZ NESTS THE NEIGHBORHOOD");
       break;
   }
