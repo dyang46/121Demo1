@@ -1,12 +1,11 @@
 import "./style.css";
 
 let clickCount = 0;
-let shopCount = 0;
 let netGrowth = 0;
 
 const app: HTMLDivElement = document.querySelector("#app")!;
 
-const gameName = "KAZ NEST THE HOUSE";
+const gameName = "KAZ NEST THE DESK";
 
 document.title = gameName;
 
@@ -22,91 +21,111 @@ Shop.innerHTML = "Lay egg: -10 m² per each";
 Shop.disabled=true;
 Shop.id = "shop";
 
-const unitName = document.createElement("div");
+//const unitName = document.createElement("div");
 
-unitName.innerHTML= "Nest (unit: m²)";
+//unitName.innerHTML= "Nest (unit: m²)";
 
 const numDislay = document.createElement("div");
-numDislay.innerHTML = `${clickCount}`;
+numDislay.innerHTML = `Current nest: 0 m²`;
 numDislay.id = "num";
+
+const growDislay = document.createElement("div");
+growDislay.innerHTML = `Nest growth rate + 0 m²/sec`;
+growDislay.id = "rate";
 
 const message = document.createElement("msg");
 message.innerHTML = "Nesting kid x1";
 message.id = "message";
 
+app.append(header,Butest, numDislay,growDislay);
+
 interface item{
   cost:number;
   growthRate:number;
+  total:number;
   display:string;
   msgKey:string;
-  id:string;
+  button:HTMLButtonElement;
+  dim:boolean;
 }
 
-const itemList: item[] = [];
+const itemList: item[] = [
+  {
+    cost: 10,
+    growthRate:0.1,
+    total:0,
+    display:"Work harder! -10",
+    msgKey:"Working 1 more hour per day!",
+    button:document.createElement("button"),
+    dim:true
+  },
+  {
+    cost: 100,
+    growthRate:2.0,
+    total:0,
+    display:"Lay egg! -100",
+    msgKey:"Nesting kid #1 is born",
+    button:document.createElement("button"),
+    dim:true
+  },
+  {
+    cost: 1000,
+    growthRate:50.0,
+    total:0,
+    display:"Annual meeting! -1000",
+    msgKey:"New nesting plan has made",
+    button:document.createElement("button"),
+    dim:true
 
-function addButton(cost:number, growthRate:number,display:string,msgKey:string,id:string){
-  const newB=  document.createElement("button");
-  newB.innerHTML = display;
-  newB.id = id;
-  newB.disabled = true;
-  app.append(newB);
-  itemList.push({cost,growthRate,display,msgKey,id});
-}
+  },
+  { 
+    cost: 5000,
+    growthRate:100.0,
+    total:0,
+    display:"Build Internest! -5000",
+    msgKey:"Nesting 100 times faster",
+    button:document.createElement("button"),
+    dim:true
 
-app.append(header,Butest,unitName, numDislay,Shop);
-
-addButton(10,0.1,"Work harder","New plan made","i1");
-addButton(100,2.0,"Lay egg","New plan made","i2");
-addButton(1000,50,"Build a spider house","New plan made","i3");
-addButton(5000,100,"Start annul spider meeting","New plan made","i4");
-addButton(10000,1000,"Internest","New plan made","i5");
-
-function trackButtonClick() {
-  clickCount++;
-  if (clickCount==10){
-    updateShop();
-    //requestAnimationFrame(movediv);
   }
-  //console.log(clickCount);
-  updateClickCount();
+];
+
+addButton(itemList);
+
+function addButton(itemList: item[]){
+  for(const i in itemList){
+    const k = itemList[i].button;
+    k.disabled = true;
+    k.innerHTML = itemList[i].display;
+    app.append(k);
+    console.log(itemList[i].msgKey);
+    k.addEventListener('click',()=>trackShop(itemList[i]));
+  }
+
 }
 
-function updateClickCount() {
+function updateClickCount() {  
   const clickCountElement = document.getElementById("num");
   if (clickCountElement) {
-    clickCountElement.textContent = `${clickCount.toFixed(0)}`;
+    clickCountElement.textContent = `Current nest: ${clickCount.toFixed(1)} m²`;
   }
-  switch(clickCount){
-    case 70:
+  switch(clickCount.toFixed(0)){
+    case '5':
       console.log("reached 100");
+      updateGameName("header","KAZ NEST THE ROOM");
+      break;
+    case '50':
+      updateGameName("header","KAZ NEST THE HOUSE");
+      break;
+    case '600':
+      updateGameName("header","KAZ NEST THE BLOCK");
+      break;
+    case '1000000':
       updateGameName("header","KAZ NEST THE NEIGHBORHOOD");
-      break;
-    case 1000:
-      updateGameName("header","KAZ NEST THE CITY");
-      break;
-    case 10000:
-      updateGameName("header","KAZ NEST THE COUNTRY");
-      break;
-    case 1000000:
-      updateGameName("header","KAZ NEST THE EARTH");
       break;
   }
 }
 
-function updateShop(){
-  if(Shop.disabled == true){
-    const Shopelement = document.getElementById("shop");
-    if (Shopelement){
-      Shop.disabled =false;
-    }
-  }else{
-    const shopCountElement = document.getElementById("message");
-    if (shopCountElement) {
-      shopCountElement.textContent = "Nesting kids x"+shopCount.toString();
-  }
-  }
-  
-}
 
 function updateGameName(t:string,j: string) {
   const GameName = document.getElementById(t);
@@ -115,45 +134,51 @@ function updateGameName(t:string,j: string) {
   }
 }
 
+function trackMainClick(itemList:item[]) {
+  clickCount++;
+  updateShop(itemList);  
+  updateClickCount();
+
+}
+
+Butest.addEventListener('click', ()=>trackMainClick(itemList));
+
+
+
+function updateShop(itemlist:item[]){
+  for(const i in itemlist){
+    if (clickCount >= itemlist[i].cost){      
+      itemlist[i].button.disabled=false;
+      console.log('click');
+    }else{
+      itemlist[i].button.disabled=true;
+    }
+  }  
+}
+
+function trackShop(i:item){  
+    clickCount -= i.cost;
+    netGrowth += i.growthRate;
+
+    growDislay.innerHTML = `Nest growth rate + ${netGrowth.toFixed(1)} m²/sec`
+
+    if(clickCount < i.cost){      
+      i.button.disabled=true;
+    }
+}
+
 let lasttime:number = 0;
 
 function movediv(time:number){
-  //console.log("time:" + time);
+
   const passed = time - lasttime;
   lasttime = time;
-  const toadd = passed*0.001*netGrowth;
-  //console.log("this is to add:" + toadd);
+  const toadd = passed*0.001* netGrowth;
+
   clickCount += toadd;
-  //console.log(clickCount);
   updateClickCount();  
+  updateShop(itemList);
   requestAnimationFrame(movediv);
 }
+
 requestAnimationFrame(movediv);
-function trackShopClick(){
-  if (clickCount >=10){
-  //console.log(clickCount);
-  clickCount -= 10;  
-  netGrowth += 1;
-  //requestAnimationFrame(movediv);
-  shopCount ++;
-  updateShop();
-  app.append(message);
-  }
-}
-
-
-//track each click
-
-Butest.addEventListener('click', trackButtonClick);
-Shop.addEventListener('click', trackShopClick);
-
-
-
-
-//requestAnimationFrame(movediv);
-//Old Step 3 code
-
-/*setInterval(() => {
-  clickCount++;
-  updateClickCount();
-}, 1000);*/
