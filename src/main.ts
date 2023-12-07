@@ -3,6 +3,7 @@ import "./style.css";
 //add click and growth counter
 let clickCount = 0;
 let netGrowth = 0;
+let lasttime:number = 0;
 
 //add basic UI
 const app: HTMLDivElement = document.querySelector("#app")!;
@@ -15,16 +16,19 @@ const header = document.createElement("h1");
 header.innerHTML = gameName;
 header.id = "header";
 
+//spider button
 const Butest = document.createElement("button");
 Butest.style.borderRadius = '10000px';
 Butest.style.fontSize = '2em';
 Butest.style.opacity = '0.8';
 Butest.innerHTML = "🕷️";
 
+//click display
 const numDislay = document.createElement("div");
 numDislay.innerHTML = `Current nest: 0.00 m²`;
 numDislay.id = "num";
 
+//growth rate display
 const growDislay = document.createElement("div");
 growDislay.innerHTML = `Nest growth rate + 0.00 m²/sec`;
 growDislay.id = "rate";
@@ -36,9 +40,9 @@ message.id = "message";
 const nestpic = document.createElement("nest");
 nestpic.innerHTML = "🕸️";
 
-
+//add all to app
 app.append(header,Butest, numDislay,growDislay,nestpic);
-//finish basics
+
 
 //Adding shop buttons
 interface item{
@@ -121,8 +125,12 @@ const itemList: item[] = [
   }
 ];
 
-addButton(itemList);
+addButton(itemList);    // build shop
+Butest.addEventListener('click', ()=>trackMainClick(itemList));    //track shop buttons
+requestAnimationFrame(movediv);    //start time
 
+//FUNCTIONS
+//shop builder: add item from itemlist to game 
 function addButton(itemList: item[]){
   for(const i in itemList){
     const k = itemList[i].button;
@@ -134,6 +142,7 @@ function addButton(itemList: item[]){
 
 }
 
+//controls click counter and game title display
 function updateClickCount() {  
   const clickCountElement = document.getElementById("num");
   if (clickCountElement) {
@@ -156,7 +165,7 @@ function updateClickCount() {
   }
 }
 
-
+//change game name function
 function updateGameName(t:string,j: string) {
   const GameName = document.getElementById(t);
   if (GameName) {
@@ -164,6 +173,7 @@ function updateGameName(t:string,j: string) {
   }
 }
 
+//tracks click count number and connects shop and click display 
 function trackMainClick(itemList:item[]) {
   clickCount++;
   updateShop(itemList);  
@@ -171,10 +181,7 @@ function trackMainClick(itemList:item[]) {
 
 }
 
-Butest.addEventListener('click', ()=>trackMainClick(itemList));
-
-
-
+//enable item from shop
 function updateShop(itemlist:item[]){
   for(const i in itemlist){
     if (clickCount >= itemlist[i].cost){      
@@ -185,14 +192,14 @@ function updateShop(itemlist:item[]){
   }  
 }
 
+//price keeper & shop display
 function trackShop(i:item){      
     clickCount -= i.cost;
     i.cost = i.cost*1.15;
     i.button.innerHTML = i.display+i.cost.toFixed(2)+i.msgKey3;
     netGrowth += i.growthRate;
     i.total += 1;    
-    if(i.dim == true){
-      //i.msg.textContent = i.msgKey1 + i.total + i.msgKey2;
+    if(i.dim == true){            
       app.append(i.msg);
       i.dim = false;
     }
@@ -206,8 +213,8 @@ function trackShop(i:item){
     }
 }
 
-let lasttime:number = 0;
-
+//tracks time in second
+////////////// This is inspired by Michael Long from CMPM121 Fall 2023
 function movediv(time:number){
 
   const passed = time - lasttime;
@@ -219,5 +226,5 @@ function movediv(time:number){
   updateShop(itemList);
   requestAnimationFrame(movediv);
 }
+////////////////
 
-requestAnimationFrame(movediv);
